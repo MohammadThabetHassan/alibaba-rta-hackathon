@@ -27,7 +27,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y portaudio19-dev  # Install portaudio
+          sudo apt-get install -y portaudio19-dev  # Install portaudio dependency
 
       - name: Install Backend Dependencies
         run: |
@@ -42,12 +42,17 @@ jobs:
       - name: Build Frontend
         run: |
           cd frontend/alibabarta-frontend
-          npm run build
+          CI='' npm run build
 
       - name: Serve Frontend and Run Backend
         run: |
+          # Start the frontend server in the background
           cd frontend/alibabarta-frontend/build
-          python3 -m http.server 3000 &
+          nohup python3 -m http.server 3000 &
 
+          # Start the backend server in the background
           cd ../../../backend
-          uvicorn main:app --host 0.0.0.0 --port 8000
+          nohup uvicorn main:app --host 0.0.0.0 --port 8000 &
+
+          # Keep the workflow running
+          sleep infinity
