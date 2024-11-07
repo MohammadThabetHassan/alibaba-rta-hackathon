@@ -1,8 +1,8 @@
 name: Run Full Application (Backend + Frontend)
 
 on:
-  workflow_dispatch:  # Allows manual triggering
-  push:  # Triggers on push to main or specified branches
+  workflow_dispatch:
+  push:
     branches:
       - main
 
@@ -17,12 +17,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'  # or your required version
+          python-version: '3.10'
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  # or your required Node version
+          node-version: '20'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y portaudio19-dev  # Install portaudio
 
       - name: Install Backend Dependencies
         run: |
@@ -41,10 +46,8 @@ jobs:
 
       - name: Serve Frontend and Run Backend
         run: |
-          # Serve frontend using a simple HTTP server for testing (replace with Nginx if needed)
           cd frontend/alibabarta-frontend/build
-          python3 -m http.server 3000 &  # Serve frontend on port 3000 in the background
+          python3 -m http.server 3000 &
 
-          # Run backend (Uvicorn) on port 8000
           cd ../../../backend
           uvicorn main:app --host 0.0.0.0 --port 8000
