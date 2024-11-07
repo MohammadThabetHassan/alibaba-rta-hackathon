@@ -41,7 +41,7 @@ jobs:
     - name: Run Backend Tests
       run: |
         cd backend
-        pytest
+        pytest --maxfail=0
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
